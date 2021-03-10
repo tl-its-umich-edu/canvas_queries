@@ -5,7 +5,7 @@ Use the following query to find LTI tool installations in Canvas instance.
 Replace the `<LTI Tool Name>` with the name of a LTI tool.
 
 ```
-select canvas_id, name, code, publicly_visible , workflow_state
+ select enrollment_term_id, canvas_id as course_id, name as course_name, code as course_code, publicly_visible , workflow_state
  from course_dim cd2
  where id in
  (
