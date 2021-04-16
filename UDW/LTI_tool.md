@@ -6,15 +6,28 @@ Replace the `<LTI Tool Name>` with the name of a LTI tool.
 
 ```
  select 
- etd."name" , 
+ etd.canvas_id as term_id,
+ etd."name" as term_name,
+ ad.canvas_id as account_id,
+ ad."name" as account_name,
  cd2.canvas_id as course_id, 
- cd2.name as course_name, 
- cd2.code as course_code, 
- cd2.publicly_visible, 
- cd2.workflow_state
- from course_dim cd2, enrollment_term_dim etd 
+ cd2.name as course_name,
+ cd2.workflow_state as course_workflow_status,
+ csd."name" as section_name,
+ pd.unique_name as teacher_uniqname,
+ ud."name" as teacher_name
+ from course_dim cd2, enrollment_term_dim etd, account_dim ad, enrollment_dim ed, course_section_dim csd, role_dim rd, pseudonym_dim pd, user_dim ud 
  where 
  cd2.enrollment_term_id = etd.id 
+ and cd2.id = ed.course_id 
+ and cd2.account_id = ad.id
+ and pd.workflow_state != 'deleted'
+ and ed.course_section_id = csd.id
+ and ed.role_id = rd.id
+ and (ed.workflow_state = 'active' or ed.workflow_state = 'completed' or ed.workflow_state = 'invited')
+ and rd.name = 'TeacherEnrollment'
+ and ed.user_id = pd.user_id 
+ and pd.user_id = ud.id 
  and cd2.id in
  (
  	select course_id
@@ -31,10 +44,10 @@ Replace the `<LTI Tool Name>` with the name of a LTI tool.
 			 where external_tool_activation_id
 			 in (
 				 select id from external_tool_activation_dim etad
-				 where name = '<LTI TOOL NAME>' and workflow_state ='active' and activation_target_type ='account'
+				 where name = '<LTI Tool Name>' and workflow_state ='active' and activation_target_type ='account'
 			 )
 		 ) and visible = 'visible'
 	 )
  )
-order by etd."name" desc
+order by etd.canvas_id desc, cd2.canvas_id ASC, ud."name" ASC 
 ```
