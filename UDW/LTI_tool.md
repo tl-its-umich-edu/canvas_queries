@@ -44,7 +44,13 @@ Replace the `<LTI Tool Name>` with the name of a LTI tool.
 			 where external_tool_activation_id
 			 in (
 				 select id from external_tool_activation_dim etad
-				 where name = '<LTI Tool Name>' and workflow_state ='active' and activation_target_type ='account'
+				 where 
+				 lower(name) = '<LTI Tool Name>' 
+				 -- use the following to match search string
+				 -- lower(name) like '%search_string%' 
+				 and workflow_state ='active' 
+				 -- use the following to look for account-level LTI tools
+				 -- and activation_target_type ='account' 
 			 )
 		 ) and visible = 'visible'
 	 )
