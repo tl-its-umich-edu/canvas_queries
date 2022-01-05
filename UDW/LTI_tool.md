@@ -1,6 +1,6 @@
 ## LTI tool installation query
 
-Use the following query to find LTI tool installations in Canvas instance.
+Use the following query to find LTI tool installations (course and instructors) in Canvas instance.
 
 Replace the `<LTI Tool Name>` with the name of a LTI tool.
 
@@ -51,9 +51,51 @@ Replace the `<LTI Tool Name>` with the name of a LTI tool.
 				 and workflow_state ='active' 
 				 -- use the following to look for account-level LTI tools
 				 -- and activation_target_type ='account' 
+				 -- sometimes there are multiple LTI tools with same name; 
+				 -- add url value as another filter field
+				 and url = '<tool_launch_url>'
 			 )
 		 ) and visible = 'visible'
 	 )
  )
 order by etd.canvas_id desc, cd2.canvas_id ASC, ud."name" ASC 
+```
+
+## get list of courses (course name, course id, term) with the LTI tool installed
+```
+select name, canvas_id, enrollment_term_id 
+from course_dim cd 
+where cd.id in 
+(
+select course_id
+ 	from course_ui_navigation_item_fact
+ 	where course_ui_navigation_item_id
+ 	in
+ 	(
+		 select id
+		 from course_ui_navigation_item_dim cd
+		 where id in
+		 (
+			 select course_ui_navigation_item_id
+			 from course_ui_navigation_item_fact cunif
+			 where external_tool_activation_id
+			 in (
+				 select id
+				 from external_tool_activation_dim etad
+				 where 
+				 lower(name) = '<LTI Tool Name>' 
+				 -- use the following to match search string
+				 -- lower(name) like '%search_string%' 
+				 and workflow_state ='active' 
+				 -- use the following to look for account-level LTI tools
+				 -- and activation_target_type ='account'
+				 -- sometimes there are multiple LTI tools with same name; 
+				 -- add url value as another filter field
+				 and url = '<tool_launch_url>'
+			 )
+		 ) and visible = 'visible'
+	 )
+ )
+ and (cd.enrollment_term_id = '<term_id>' or cd.enrollment_term_id ='<term_id>')
+ order by cd.enrollment_term_id, name asc
 ```
