@@ -53,7 +53,7 @@ Replace the `<LTI Tool Name>` with the name of a LTI tool.
 				 -- and activation_target_type ='account' 
 				 -- sometimes there are multiple LTI tools with same name; 
 				 -- add url value as another filter field
-				 and url = '<tool_launch_url>'
+				 -- and url = '<tool_launch_url>'
 			 )
 		 ) and visible = 'visible'
 	 )
