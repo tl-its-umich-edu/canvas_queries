@@ -2,7 +2,7 @@
 
 Use the following query to find LTI tool installations (course and instructors) in Canvas instance.
 
-Replace the `<LTI Tool Name>` with the name of a LTI tool.
+Replace the `<LTI Tool Name in lower case>` with the lower case string of a LTI tool name.
 
 ```
  select 
