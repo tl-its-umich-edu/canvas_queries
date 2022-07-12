@@ -45,7 +45,7 @@ Replace the `<LTI Tool Name>` with the name of a LTI tool.
 			 in (
 				 select id from external_tool_activation_dim etad
 				 where 
-				 lower(name) = '<LTI Tool Name>' 
+				 lower(name) = '<LTI Tool Name in lower case>' 
 				 -- use the following to match search string
 				 -- lower(name) like '%search_string%' 
 				 and workflow_state ='active' 
@@ -83,7 +83,7 @@ select course_id
 				 select id
 				 from external_tool_activation_dim etad
 				 where 
-				 lower(name) = '<LTI Tool Name>' 
+				 lower(name) = '<LTI Tool Name in lower case>' 
 				 -- use the following to match search string
 				 -- lower(name) like '%search_string%' 
 				 and workflow_state ='active' 
