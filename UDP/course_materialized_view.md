@@ -2,11 +2,11 @@
 
 - the materialized view for courses in certain term 
 ```
-drop view student_sp_su_2022_course;
-REFRESH MATERIALIZED view student_sp_su_2022_course;
+drop view student_current_term_course;
+REFRESH MATERIALIZED view student_current_term_course;
 
-create materialized view student_sp_su_2022_course as
-select
+create materialized view student_current_term_course as
+ select
 	co2.lms_ext_id as "Canvas_Course_ID",
 	co.le_code as canvas_course_title,
 	co.course_offering_id as course_offering_id,
@@ -52,23 +52,24 @@ and co.le_status = 'available'
 and co2.id = co.course_offering_id
 and cg2.course_section_id = cs.course_section_id 
 and cg2.person_id = pe.person_id
-and pat.academic_term_id = at2.academic_term_id--
--- and at2.name ='Winter 2022'
-and (at2.name='Spring 2022' or at2.name='Spring/Summber 2022')
+and pat.academic_term_id = at2.academic_term_id
+and at2.academic_term_id = pamat.academic_term_id
 and pe.person_id = pat.person_id 
 and pat.person_id = pamat.person_id 
 and pamat.academic_major_id = am.academic_major_id
-and pamat.academic_term_id = '554'
 and am.academic_program_id = ap.academic_program_id
+-- get current term data
+and current_timestamp < at2.term_end_date
+and current_timestamp > at2.term_begin_date 
 order by pe.person_id 
 with data
 ```
 
 - the materialized view for student learning activities in course
 ```
-drop view student_sp_su_2022_course_activities;
-REFRESH MATERIALIZED view student_sp_su_2022_course_activities
-create materialized view student_sp_su_2022_course_activities 
+drop view student_current_term_course_activities;
+REFRESH MATERIALIZED view student_current_term_course_activities
+create materialized view student_current_term_course_activities 
 as
 select lar.person_id, 
 la.course_offering_id, 
@@ -90,7 +91,9 @@ and lar.grading_status = 'graded'
 and a.learner_activity_result_id = lar.learner_activity_result_id 
 and a.is_hidden is false 
 and la.course_offering_id = co.course_offering_id 
-and co.academic_term_id = at2.academic_term_id 
-and (at2.name='Spring 2022' or at2.name='Spring/Summber 2022')
+and co.academic_term_id = at2.academic_term_id
+-- get current term data
+and current_timestamp < at2.term_end_date
+and current_timestamp > at2.term_begin_date 
 with data	
 ```
