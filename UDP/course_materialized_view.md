@@ -2,8 +2,8 @@
 
 - the materialized view for courses in certain term 
 ```
-DROP MATERIALIZED view student_current_term_course;
-create materialized view student_current_term_course as
+DROP MATERIALIZED view 1_student_current_term_course;
+create materialized view 1_student_current_term_course as
  select
 	co2.lms_ext_id as "Canvas_Course_ID",
 	co.le_code as canvas_course_title,
@@ -65,8 +65,8 @@ with data
 
 - the materialized view for student assignment averages, used to enhance the the performance of following view 'student_current_term_course_activities'
 ```
-DROP MATERIALIZED view student_current_term_course_assignment_avg;
-create materialized view student_current_term_course_assignment_avg
+DROP MATERIALIZED view 2_student_current_term_course_assignment_avg;
+create materialized view 2_student_current_term_course_assignment_avg
 as
 select la.course_offering_id, lar.learner_activity_id, avg(lar.published_score)::NUMERIC(10,2) as avg_assignment_score
 from 
@@ -91,8 +91,8 @@ with data
 
 - the materialized view for student learning activities in course
 ```
-DROP MATERIALIZED view student_current_term_course_activities;
-create materialized view student_current_term_course_activities 
+DROP MATERIALIZED view 3_student_current_term_course_activities;
+create materialized view 3_student_current_term_course_activities 
 as
 select lar.person_id, 
 la.course_offering_id, 
@@ -105,7 +105,7 @@ lar.published_grade as assignment_grade,
 course_assignment_avg.avg_assignment_score,
 a.body_value as assignment_comment
 from
-	student_current_term_course_assignment_avg course_assignment_avg,
+	2_student_current_term_course_assignment_avg course_assignment_avg,
 	entity.learner_activity_result lar,
 	entity.annotation a,
 	entity.learner_activity la
@@ -122,7 +122,7 @@ with data
 
 ## view refresh queries for the daily cron job
 ```
-REFRESH MATERIALIZED view student_current_term_course;
-REFRESH MATERIALIZED view student_current_term_course_assignment_avg;
-REFRESH MATERIALIZED view student_current_term_course_activities;
+REFRESH MATERIALIZED view 1_student_current_term_course;
+REFRESH MATERIALIZED view 2_student_current_term_course_assignment_avg;
+REFRESH MATERIALIZED view 3_student_current_term_course_activities;
 ```
