@@ -68,24 +68,17 @@ with data
 DROP MATERIALIZED view v2_student_current_term_course_assignment_avg;
 create materialized view v2_student_current_term_course_assignment_avg
 as
-select la.course_offering_id, lar.learner_activity_id, avg(lar.published_score)::NUMERIC(10,2) as avg_assignment_score
-from 
-entity.learner_activity_result lar,
-entity.annotation a,
-entity.learner_activity la,
-entity.course_offering co,
-entity.academic_term at2
-where lar.learner_activity_id = la.learner_activity_id 
-and lar.gradebook_status = 'true'
-and lar.grading_status = 'graded'
-and a.learner_activity_result_id = lar.learner_activity_result_id 
-and a.is_hidden is false 
-and la.course_offering_id = co.course_offering_id 
-and co.academic_term_id = at2.academic_term_id
--- get current term data
-and current_timestamp < at2.term_end_date
-and current_timestamp > at2.term_begin_date
-group by la.course_offering_id, lar.learner_activity_id 
+select 
+la.course_offering_id, 
+lar.learner_activity_id, 
+(avg(lar.published_score) FILTER (WHERE lar.gradebook_status = 'true' and lar.grading_status = 'graded') ::NUMERIC(10,2) ) as avg_assignment_score
+from
+v1_student_current_term_course vsctc 
+left join entity.learner_activity la on vsctc.course_offering_id = la.course_offering_id 
+left join entity.learner_activity_result lar on la.learner_activity_id = lar.learner_activity_id 
+left join entity.annotation a on a.learner_activity_result_id = lar.learner_activity_result_id
+where la.course_offering_id ='1855936'
+group by la.course_offering_id, lar.learner_activity_id
 with data
 ```
 
@@ -94,29 +87,31 @@ with data
 DROP MATERIALIZED view v3_student_current_term_course_activities;
 create materialized view v3_student_current_term_course_activities 
 as
-select lar.person_id, 
+select lar.person_id,  
 la.course_offering_id, 
 la.learner_activity_id,
 la.title as assignment_title,
 TO_CHAR(la.due_date :: DATE, 'YYYY-MM-DD hh:mm:ss TZ') as assignment_due_date,
-lar.published_score as assignment_score,
+CASE
+   WHEN lar.gradebook_status = 'true' and lar.grading_status = 'graded' THEN lar.published_score
+   ELSE null
+END assignment_score,
 la.points_possible as max_assignment_score,
-lar.published_grade as assignment_grade,
+CASE
+   WHEN lar.gradebook_status = 'true' and lar.grading_status = 'graded' THEN lar.published_grade
+   ELSE null
+END assignment_grade,
 course_assignment_avg.avg_assignment_score,
-a.body_value as assignment_comment
+CASE
+   WHEN a.is_hidden is false THEN a.body_value
+   ELSE ''
+END assignment_comment
 from
-	v2_student_current_term_course_assignment_avg course_assignment_avg,
-	entity.learner_activity_result lar,
-	entity.annotation a,
-	entity.learner_activity la
-where 
-course_assignment_avg.learner_activity_id = lar.learner_activity_id 
-and course_assignment_avg.course_offering_id = la.course_offering_id
-and lar.learner_activity_id = la.learner_activity_id
-and lar.gradebook_status = 'true'
-and lar.grading_status = 'graded'
-and a.learner_activity_result_id = lar.learner_activity_result_id 
-and a.is_hidden is false
+	v1_student_current_term_course vsctc 
+	left join v2_student_current_term_course_assignment_avg course_assignment_avg on vsctc.course_offering_id = course_assignment_avg.course_offering_id 
+	left join entity.learner_activity la on course_assignment_avg.learner_activity_id = la.learner_activity_id 
+	left join entity.learner_activity_result lar on vsctc.person_id = lar.person_id and la.learner_activity_id  = lar.learner_activity_id 
+	left join entity.annotation a on lar.learner_activity_result_id  = a.learner_activity_result_id 
 with data
 ```
 
