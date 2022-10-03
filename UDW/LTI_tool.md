@@ -1,8 +1,10 @@
-## LTI tool installation query
+## LTI tool installation queries
 
 Use the following query to find LTI tool installations (course and instructors) in Canvas instance.
 
 Replace the `<LTI Tool Name in lower case>` with the lower case string of a LTI tool name.
+
+## List instructors for courses (course name, course id, term) with the LTI tool installed
 
 ```
  select 
@@ -61,7 +63,8 @@ Replace the `<LTI Tool Name in lower case>` with the lower case string of a LTI 
 order by etd.canvas_id desc, cd2.canvas_id ASC, ud."name" ASC 
 ```
 
-## get list of courses (course name, course id, term) with the LTI tool installed
+## List courses (course name, course id, term) with the LTI tool installed
+
 ```
 select name, canvas_id, enrollment_term_id 
 from course_dim cd 
