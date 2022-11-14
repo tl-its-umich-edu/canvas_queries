@@ -77,6 +77,7 @@ v1_student_current_term_course vsctc
 left join entity.learner_activity la on vsctc.course_offering_id = la.course_offering_id 
 left join entity.learner_activity_result lar on la.learner_activity_id = lar.learner_activity_id 
 left join entity.annotation a on a.learner_activity_result_id = lar.learner_activity_result_id
+where la.status = 'published'
 group by la.course_offering_id, lar.learner_activity_id
 with data
 ```
@@ -111,6 +112,7 @@ from
 	left join entity.learner_activity la on course_assignment_avg.learner_activity_id = la.learner_activity_id 
 	left join entity.learner_activity_result lar on vsctc.person_id = lar.person_id and la.learner_activity_id  = lar.learner_activity_id 
 	left join entity.annotation a on lar.learner_activity_result_id  = a.learner_activity_result_id 
+where la.status = 'published'
 with data
 ```
 
