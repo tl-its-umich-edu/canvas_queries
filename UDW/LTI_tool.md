@@ -14,10 +14,12 @@ Replace the `<LTI Tool Name in lower case>` with the lower case string of a LTI 
  ad."name" as account_name,
  cd2.canvas_id as course_id, 
  cd2.name as course_name,
+ cd2.sis_source_id as course_sis_id,
  cd2.workflow_state as course_workflow_status,
  csd."name" as section_name,
- pd.unique_name as teacher_uniqname,
- ud."name" as teacher_name
+ pd.unique_name as user_uniqname,
+ ud."name" as user_name,
+ rd.name as user_role_name
  from course_dim cd2, enrollment_term_dim etd, account_dim ad, enrollment_dim ed, course_section_dim csd, role_dim rd, pseudonym_dim pd, user_dim ud 
  where 
  cd2.enrollment_term_id = etd.id 
@@ -66,7 +68,10 @@ order by etd.canvas_id desc, cd2.canvas_id ASC, ud."name" ASC
 ## List courses (course name, course id, term) with the LTI tool installed
 
 ```
-select name, canvas_id, enrollment_term_id 
+select 	name as course_name,
+	canvas_id as course_id, 
+	enrollment_term_id as course_term_id,
+	sis_source_id as course_sis_id,
 from course_dim cd 
 where cd.id in 
 (
