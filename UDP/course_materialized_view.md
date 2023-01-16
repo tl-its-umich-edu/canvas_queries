@@ -4,14 +4,16 @@
 ```
 DROP MATERIALIZED view v1_student_current_term_course;
 create materialized view v1_student_current_term_course as
- with
+with
+term_info as (select academic_term_id , name as term_name from entity.academic_term at2 where  current_timestamp < at2.term_end_date  
+and current_timestamp > at2.term_begin_date ),
 courses as 
-(select co.course_offering_id, co.le_code as canvas_course_title, co.available_credits as credits, co.academic_term_id from entity.course_offering co ),
+(select co.course_offering_id, co.le_code as canvas_course_title, co.available_credits as credits, co.academic_term_id, term_name
+from entity.course_offering co join term_info at2 on co.academic_term_id = at2.academic_term_id where co.le_status = 'available'),
 sections as 
 (select cs.course_section_id , cs2.lms_ext_id as canvas_section_id, cs.le_current_course_offering_id as course_offering_id, co4.lms_ext_id as "Canvas_Course_ID", cs.le_name as section_name, cs.section_number as "Section"
 from entity.course_section cs join keymap.course_section cs2 on cs.course_section_id = cs2.id join keymap.course_offering co4 on co4.id = cs.le_current_course_offering_id and cs.status='active'),
-term_info as (select at3.academic_term_id, at3."name" as term_name from entity.academic_term at3 join keymap.academic_term at4 on at3.academic_term_id=at4.id and current_date < at3.le_term_end_date and at3.le_term_begin_date > current_date ),
-courses_sections_of_current_term as (select c.canvas_course_title, s.*, c.academic_term_id, t.term_name, Credits from courses c join sections s on c.course_offering_id=s.course_offering_id join term_info t on t.academic_term_id = c.academic_term_id),
+courses_sections_of_current_term as (select c.canvas_course_title, c.term_name, s.*, c.academic_term_id, c.credits from courses c join sections s on c.course_offering_id=s.course_offering_id),
 enrollment as 
 (select cse.course_section_id, cse.person_id, REPLACE (lower(pe.email_address), '@umich.edu', '') as uniqname, p."name" as person_name from entity.course_section_enrollment cse join entity.person_email pe 
 on pe.person_id = cse.person_id join entity.person p on p.person_id = cse.person_id where cse."role"='Student' and cse.role_status = 'Enrolled' and cse.enrollment_status = 'Active'),
@@ -59,7 +61,7 @@ select lar.person_id,
 la.course_offering_id, 
 la.learner_activity_id,
 la.title as assignment_title,
-TO_CHAR(la.due_date :: DATE, 'YYYY-MM-DD hh:mm:ss TZ') as assignment_due_date,
+TO_CHAR(la.due_date at time zone 'UTC' at time zone 'EST', 'YYYY-MM-DD HH12:MI AM')  as assignment_due_date,
 CASE
    WHEN lar.gradebook_status = 'true' and lar.grading_status = 'graded' THEN lar.published_score
    ELSE null
