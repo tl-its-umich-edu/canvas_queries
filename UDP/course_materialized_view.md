@@ -61,7 +61,7 @@ select lar.person_id,
 la.course_offering_id, 
 la.learner_activity_id,
 la.title as assignment_title,
-TO_CHAR(la.due_date at time zone 'UTC' at time zone 'EST', 'YYYY-MM-DD HH12:MI AM')  as assignment_due_date,
+TO_CHAR(la.due_date at time zone 'UTC' at time zone 'EST', 'YYYY-MM-DD HH24:MI:SS')  as assignment_due_date,
 CASE
    WHEN lar.gradebook_status = 'true' and lar.grading_status = 'graded' THEN lar.published_score
    ELSE null
