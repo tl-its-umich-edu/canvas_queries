@@ -92,3 +92,15 @@ REFRESH MATERIALIZED view v1_student_current_term_course;
 REFRESH MATERIALIZED view v2_student_current_term_course_assignment_avg;
 REFRESH MATERIALIZED view v3_student_current_term_course_activities;
 ```
+
+## Auto-Refreshed Materialized Views
+Details are here: https://resources.unizin.org/display/UDP/UDP+Context+store
+You can adjust the query at the bottom of the resources page link to verify all views have the right owner attached:
+
+``` select
+  matviewname
+from pg_matviews
+where
+  matviewowner = 'institution'
+  order by matviewname asc;
+  ```
