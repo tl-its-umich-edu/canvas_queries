@@ -22,8 +22,8 @@ on pe.person_id = cse.person_id join entity.person p on p.person_id = cse.person
 courses_enrollment as (select cst.*, e.person_id, e.uniqname, e.person_name from courses_sections_of_current_term cst join enrollment e on e.course_section_id = cst.course_section_id),
 course_grades as (select ce.*, cg.le_current_score as "Current_Grade", cg.le_final_score as "Final_Grade", cg.gpa_cumulative_excluding_course_grade as cumulative_gpa from entity.course_grade cg join courses_enrollment ce on ce.course_section_id = cg.course_section_id and ce.person_id = cg.person_id),
 
-avg_course_grade as (select "Canvas_Course_ID", round(AVG("Current_Grade"),2) as avg_course_grade  from course_grades group by  "Canvas_Course_ID"),
-courses_grade_average as (select cg.*, acg.avg_course_grade  from avg_course_grade acg join course_grades cg on cg."Canvas_Course_ID"  = acg."Canvas_Course_ID"),
+average_course_grade as (select "Canvas_Course_ID", round(AVG("Current_Grade"),2) as avg_course_grade from (select distinct uniqname, "Canvas_Course_ID", "Current_Grade" from course_grades) as course_unique_student_avg_grade group by "Canvas_Course_ID"),
+courses_grade_average as (select cg.*, acg.avg_course_grade  from average_course_grade acg join course_grades cg on cg."Canvas_Course_ID"  = acg."Canvas_Course_ID"),
 
 aca_prog_major as (select am.academic_program_id, am.description as academic_major, ap.description as academic_program, ap.educational_level, am.academic_major_id 
 from entity.academic_major am join entity.academic_program ap on ap.academic_program_id = am.academic_program_id),
