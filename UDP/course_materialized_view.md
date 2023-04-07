@@ -22,6 +22,9 @@ on pe.person_id = cse.person_id join entity.person p on p.person_id = cse.person
 courses_enrollment as (select cst.*, e.person_id, e.uniqname, e.person_name from courses_sections_of_current_term cst join enrollment e on e.course_section_id = cst.course_section_id),
 course_grades as (select ce.*, cg.le_current_score as "Current_Grade", cg.le_final_score as "Final_Grade", cg.gpa_cumulative_excluding_course_grade as cumulative_gpa from entity.course_grade cg join courses_enrollment ce on ce.course_section_id = cg.course_section_id and ce.person_id = cg.person_id),
 
+average_course_grade as (select "Canvas_Course_ID", round(AVG("Current_Grade"),2) as avg_course_grade from (select distinct uniqname, "Canvas_Course_ID", "Current_Grade" from course_grades) as course_unique_student_avg_grade group by "Canvas_Course_ID"),
+courses_grade_average as (select cg.*, acg.avg_course_grade  from average_course_grade acg join course_grades cg on cg."Canvas_Course_ID"  = acg."Canvas_Course_ID"),
+
 aca_prog_major as (select am.academic_program_id, am.description as academic_major, ap.description as academic_program, ap.educational_level, am.academic_major_id 
 from entity.academic_major am join entity.academic_program ap on ap.academic_program_id = am.academic_program_id),
 person_term_major_academic as (select pamat.academic_major_id, pat.athletic_participant_sport, pat.cen_academic_level , pat.gpa_credits_units_hours, pamat.person_id, pat.academic_term_id  
@@ -31,10 +34,10 @@ on pamat.person_id = pat .person_id and pat.academic_term_id = pamat.academic_te
 person_full_academic_term_major as (select * from aca_prog_major a join person_term_major_academic b on a.academic_major_id = b.academic_major_id ),
 
 courses_enrollment_major as (select a.*, b.academic_major, b.academic_program,b.educational_level, b.athletic_participant_sport, b.cen_academic_level, b.gpa_credits_units_hours  
-from course_grades a join person_full_academic_term_major b on a.person_id = b.person_id and a.academic_term_id = b.academic_term_id)
+from courses_grade_average a join person_full_academic_term_major b on a.person_id = b.person_id and a.academic_term_id = b.academic_term_id)
 
 select "Canvas_Course_ID", canvas_course_title, course_offering_id, "Section", section_name, credits, gpa_credits_units_hours, cumulative_gpa, 
-"Current_Grade", "Final_Grade",  Uniqname, person_name, person_id, cen_academic_level, academic_major, academic_program,  athletic_participant_sport
+"Current_Grade", "Final_Grade", avg_course_grade,  Uniqname, person_name, person_id, cen_academic_level, academic_major, academic_program,  athletic_participant_sport
 , educational_level, term_name, course_section_id, canvas_section_id from courses_enrollment_major 
 with data
 ```
