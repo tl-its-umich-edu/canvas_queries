@@ -17,7 +17,7 @@ SELECT
  lar.learner_activity_id,
  ROUND(AVG(lar.published_score),2) AS avg_assignment_score
 FROM
- umich_materialized_views.v1_student_current_term_course vsctc
+ `udp-umich-prod.athletic_department_views`.v1_student_current_term_course vsctc
 LEFT JOIN
  `udp-umich-prod.context_store_entity.learner_activity` la
 ON

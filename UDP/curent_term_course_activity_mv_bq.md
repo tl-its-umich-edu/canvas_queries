@@ -28,9 +28,9 @@ END
 END
  assignment_comment
 FROM
- umich_materialized_views.v1_student_current_term_course vsctc
+ `udp-umich-prod.athletic_department_views`.v1_student_current_term_course vsctc
 LEFT JOIN
- umich_materialized_views.v2_student_current_term_course_assignment_avg course_assignment_avg
+ `udp-umich-prod.athletic_department_views`.v2_student_current_term_course_assignment_avg course_assignment_avg
 ON
  vsctc.course_offering_id = course_assignment_avg.course_offering_id
 LEFT JOIN
