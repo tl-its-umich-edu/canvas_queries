@@ -31,9 +31,9 @@ WITH
    cs.course_section_id,
    cs2.lms_ext_id AS canvas_section_id,
    cs.le_current_course_offering_id AS course_offering_id,
-   co4.lms_ext_id AS Canvas_Course_ID,
+   co4.lms_ext_id AS canvas_course_id,
    cs.le_name AS section_name,
-   cs.section_number AS Section
+   cs.section_number AS section
  FROM
    `udp-umich-prod.context_store_entity.course_section` cs
  JOIN
@@ -93,8 +93,8 @@ WITH
  course_grades AS (
  SELECT
    ce.*,
-   cg.le_current_score AS Current_Grade,
-   cg.le_final_score AS Final_Grade,
+   cg.le_current_score AS current_grade,
+   cg.le_final_score AS final_grade,
    cg.gpa_cumulative_excluding_course_grade AS cumulative_gpa
  FROM
    `udp-umich-prod.context_store_entity.course_grade` cg
@@ -116,6 +116,29 @@ WITH
    `udp-umich-prod.context_store_entity.academic_program` ap
  ON
    ap.academic_program_id = am.academic_program_id),
+ average_course_grade as (
+  select 
+    canvas_course_id, 
+    round(AVG(current_grade),2) as avg_course_grade 
+  from (
+    select 
+      distinct uniqname, 
+      canvas_course_id,
+      current_grade 
+    from course_grades
+    ) as course_unique_student_avg_grade 
+    group by canvas_course_id
+    ),
+ courses_grade_average as (
+  select 
+    cg.*, 
+    acg.avg_course_grade  
+  from 
+    average_course_grade acg 
+  join 
+    course_grades cg 
+  on 
+    cg.canvas_course_id  = acg.canvas_course_id),
  person_term_major_academic AS (
  SELECT
    pamat.academic_major_id,
@@ -151,24 +174,25 @@ WITH
    b.cen_academic_level,
    b.gpa_credits_units_hours
  FROM
-   course_grades a
+   courses_grade_average a
  JOIN
    person_full_academic_term_major b
  ON
    a.person_id = b.person_id
    AND a.academic_term_id = b.academic_term_id)
 SELECT
- Canvas_Course_ID,
+ canvas_course_id,
  canvas_course_title,
  course_offering_id,
- Section,
+ section,
  section_name,
  credits,
  gpa_credits_units_hours,
  cumulative_gpa,
- Current_Grade,
- Final_Grade,
- Uniqname,
+ current_grade,
+ final_grade,
+ avg_course_grade,
+ uniqname,
  person_name,
  person_id,
  cen_academic_level,
@@ -182,5 +206,3 @@ SELECT
 FROM
  courses_enrollment_major
 with data
-
-
