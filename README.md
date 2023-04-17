@@ -12,13 +12,13 @@ Details are here: https://resources.unizin.org/display/UDP/UDP+Context+store
 
 ## Athletic student google sheet roster
 Athletic dept provides all the student enrolled to their program in current term via a google sheet. We have an additional step 
-in making this data available to Tableau dashboard as table called `student_athletic_export`. We created this table since Tableau
+in making this data available to Tableau dashboard as table called `student_athletic_export_csv`. We created this table since Tableau
 has some issues connecting to google sheets.
 Every term this table (student_athletic_export) need to updated with latest data. This table resides in the context store with user account provisioned for the project
 Steps to update the table
 1. create a CSV File from the current term student roster
-2. Open the SQL editor from you SQL client and run `delete from student_athlete_export ` to delete all the rows
-3. Right click on the `student_athletic_export` table import CSV (from step 1)
+2. Open the SQL editor from you SQL client and run `delete from student_athlete_export_csv ` to delete all the rows
+3. Right click on the `student_athletic_export_csv` table import CSV (from step 1)
 4. Verify it has latest info.
 
 ## VSCode extension for SQL format
