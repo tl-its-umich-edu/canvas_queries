@@ -57,40 +57,28 @@ WITH
  JOIN
    sections s
  ON
-   c.course_offering_id=s.course_offering_id),
- enrollment AS (
- SELECT
-   cse.course_section_id,
-   cse.person_id,
-   REPLACE (LOWER(pe.email_address), '@umich.edu', '') AS uniqname,
-   p.name AS person_name
- FROM
-   `udp-umich-prod.context_store_entity.course_section_enrollment` cse
- JOIN
-   `udp-umich-prod.context_store_entity.person_email` pe
- ON
-   pe.person_id = cse.person_id
- JOIN
-   `udp-umich-prod.context_store_entity.person` p
- ON
-   p.person_id = cse.person_id
- WHERE
-   cse.role='Student'
-   AND cse.role_status = 'Enrolled'
-   AND cse.enrollment_status = 'Active'),
- courses_enrollment AS (
- SELECT
-   cst.*,
-   e.person_id,
-   e.uniqname,
-   e.person_name
- FROM
-   courses_sections_of_current_term cst
- JOIN
-   enrollment e
- ON
-   e.course_section_id = cst.course_section_id),
- course_grades AS (
+   c.course_offering_id=s.course_offering_id
+),
+courses_enrollment AS (
+SELECT 
+  csct.*,
+  cse.person_id, 
+  p.name AS person_name, 
+  REPLACE (LOWER(pe.email_address), '@umich.edu', '') AS uniqname 
+FROM 
+  courses_sections_of_current_term csct 
+JOIN 
+  `udp-umich-prod.context_store_entity.course_section_enrollment` cse on cse.course_section_id = csct.course_section_id
+JOIN 
+  `udp-umich-prod.context_store_entity.person` p on cse.person_id = p.person_id
+JOIN 
+  `udp-umich-prod.context_store_entity.person_email` pe on pe.person_id = p.person_id
+WHERE 
+  cse.role = 'Student'
+  AND cse.role_status = 'Enrolled' 
+  AND cse.enrollment_status = 'Active' 
+),
+course_grades AS (
  SELECT
    ce.*,
    cg.le_current_score AS current_grade,
