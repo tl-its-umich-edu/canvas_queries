@@ -1,6 +1,3 @@
-DROP MATERIALIZED view v2_student_current_term_course_assignment_avg;
-
-create materialized view v2_student_current_term_course_assignment_avg as
 WITH
  lar AS (
  SELECT
@@ -35,4 +32,3 @@ WHERE
 GROUP BY
  la.course_offering_id,
  lar.learner_activity_id
-with data

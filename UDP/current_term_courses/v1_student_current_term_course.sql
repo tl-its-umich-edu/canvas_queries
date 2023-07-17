@@ -1,6 +1,3 @@
-DROP MATERIALIZED view v1_student_current_term_course;
-
-create materialized view v1_student_current_term_course AS
 WITH
  term_info AS (
  SELECT
@@ -64,6 +61,12 @@ SELECT
   csct.*,
   cse.person_id, 
   p.name AS person_name, 
+  case
+  when p.first_name is null then REGEXP_EXTRACT(p.name, r'^\w+(?:-\w+)?') else p.first_name
+  end first_name,
+  case 
+  when p.last_name is null then REGEXP_EXTRACT(p.name, r'\w+(?:-\w+)?$') else p.last_name
+  end last_name,
   REPLACE (LOWER(pe.email_address), '@umich.edu', '') AS uniqname 
 FROM 
   courses_sections_of_current_term csct 
@@ -182,6 +185,8 @@ SELECT
  avg_course_grade,
  uniqname,
  person_name,
+ first_name,
+ last_name,
  person_id,
  cen_academic_level,
  academic_major,
@@ -193,4 +198,3 @@ SELECT
  canvas_section_id
 FROM
  courses_enrollment_major
-with data
