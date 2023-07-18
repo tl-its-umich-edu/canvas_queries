@@ -1,6 +1,3 @@
-DROP MATERIALIZED view v3_student_current_term_course_activities;
-
-create materialized view v3_student_current_term_course_activities as
 SELECT
  lar.person_id,
  la.course_offering_id,
@@ -48,4 +45,3 @@ ON
  lar.learner_activity_result_id = a.learner_activity_result_id
 WHERE
  la.status = 'published'
-with data
