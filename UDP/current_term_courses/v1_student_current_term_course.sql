@@ -61,11 +61,9 @@ SELECT
   csct.*,
   cse.person_id, 
   p.name AS person_name, 
-  case
-  when p.first_name is null then REGEXP_EXTRACT(p.name, r'^\w+(?:-\w+)?') else p.first_name
+  case when p.first_name is null then REGEXP_EXTRACT(p.name, r'^\w+(?:-\w+)?') else p.first_name
   end first_name,
-  case 
-  when p.last_name is null then REGEXP_EXTRACT(p.name, r'\w+(?:-\w+)?$') else p.last_name
+  case when p.last_name is null then REGEXP_EXTRACT(p.name, r'\w+(?:-\w+)?$') else p.last_name
   end last_name,
   REPLACE (LOWER(pe.email_address), '@umich.edu', '') AS uniqname 
 FROM 
