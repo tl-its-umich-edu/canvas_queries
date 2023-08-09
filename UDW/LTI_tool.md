@@ -71,7 +71,7 @@ order by etd.canvas_id desc, cd2.canvas_id ASC, ud."name" ASC
 select 	name as course_name,
 	canvas_id as course_id, 
 	enrollment_term_id as course_term_id,
-	sis_source_id as course_sis_id,
+	sis_source_id as course_sis_id
 from course_dim cd 
 where cd.id in 
 (
