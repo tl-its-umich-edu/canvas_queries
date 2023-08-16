@@ -67,43 +67,37 @@ order by etd.canvas_id desc, cd2.canvas_id ASC, ud."name" ASC
 
 ## List courses (course name, course id, term) with the LTI tool installed
 
-```
-select 	name as course_name,
-	canvas_id as course_id, 
-	enrollment_term_id as course_term_id,
-	sis_source_id as course_sis_id
-from course_dim cd 
-where cd.id in 
-(
-select course_id
- 	from course_ui_navigation_item_fact
- 	where course_ui_navigation_item_id
- 	in
- 	(
-		 select id
-		 from course_ui_navigation_item_dim cd
-		 where id in
-		 (
-			 select course_ui_navigation_item_id
-			 from course_ui_navigation_item_fact cunif
-			 where external_tool_activation_id
-			 in (
-				 select id
-				 from external_tool_activation_dim etad
-				 where 
-				 lower(name) = '<LTI Tool Name in lower case>' 
-				 -- use the following to match search string
-				 -- lower(name) like '%search_string%' 
-				 and workflow_state ='active' 
-				 -- use the following to look for account-level LTI tools
-				 -- and activation_target_type ='account'
-				 -- sometimes there are multiple LTI tools with same name; 
-				 -- add url value as another filter field
-				 and url = '<tool_launch_url>'
-			 )
-		 ) and visible = 'visible'
-	 )
- )
- and (cd.enrollment_term_id = '<term_id>' or cd.enrollment_term_id ='<term_id>')
- order by cd.enrollment_term_id, name asc
+```sql
+SELECT DISTINCT
+  cd.name AS course_name,
+  cd.canvas_id AS course_id,
+  cd.enrollment_term_id AS course_term_id,
+  cd.sis_source_id AS course_sis_id,
+  etad.id AS tool_id
+FROM
+  external_tool_activation_dim etad,
+  course_ui_navigation_item_fact cunif,
+  course_ui_navigation_item_dim cunid,
+  course_dim cd
+WHERE
+  -- -- -- configurable conditions begin -- -- --
+  workflow_state ='active'
+  AND lower(etad.name) = lower('«LTI tool name»')
+  -- use the following to search for a pattern
+  --AND lower(etad.name) LIKE lower('%search_string%')
+  -- use the following to search for account-level LTI tools
+  --AND etad.activation_target_type = 'account'
+  -- multiple LTI tools may have the same name; use URL to be specific
+  --AND etad.url = '«tool_launch_url»'
+  -- -- -- configurable conditions end -- -- --
+
+  -- -- -- required conditions begin -- -- --
+  AND cunif.external_tool_activation_id = etad.id
+  AND cunid.id = cunif.course_ui_navigation_item_id
+  AND cd.id = cunif.course_id
+  AND cunid.visible = 'visible'
+  -- -- -- required conditions end -- -- --
+ORDER BY
+  cd.enrollment_term_id,
+  cd.name ASC
 ```
