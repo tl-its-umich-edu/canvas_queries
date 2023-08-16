@@ -68,7 +68,7 @@ order by etd.canvas_id desc, cd2.canvas_id ASC, ud."name" ASC
 ## List courses (course name, course id, term) with the LTI tool installed
 
 ```sql
-SELECT DISTINCT
+SELECT
   cd.name AS course_name,
   cd.canvas_id AS course_id,
   cd.enrollment_term_id AS course_term_id,
