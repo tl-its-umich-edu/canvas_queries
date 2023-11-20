@@ -6,24 +6,21 @@ Common queries for Canvas data
 1. Go to BiqQuery Console for [scheduled queries](https://console.cloud.google.com/bigquery/scheduled-queries?project=udp-umich-prod) and click on `+ Create scheduled query in editor`
 2. Enter your query in the Editor and click `scheduled` button
 3. Add following in the pop-up window
-   1. Details and schedule: `datamart_name__name_you_want_to_give`. For example: `athletic_department_views__v1_student_current_term_course`
-   2. Schedule option: `days` and at `18:00`. you can added any number. Don't need to do anything for `Start now` and `End never`
+   1. Details and schedule: `datamart_name__table_name_you_want_to_give`. For example: `athletic_department_views__v1_student_current_term_course`
+   2. Schedule option: `days` and at `18:00`. you can added any number but prod is set to run 2pm EST. Don't need to do anything for `Start now` and `End never` elements.
    3. Destination for Query result: 
       1. Check the checkbox `Set a destination table for query results`
       2. Choose the data set name `athletic_department_views`
       3. Give a table name for example: `v1_student_current_term_course`
-4. Destination table write prederance: `Overwrite table`
+4. Destination table write preferance: `Overwrite table`
 
 ## Updating a Scheduled queries
-1. There is no update of schduled it's always Delete and create a new table
+1. There is no update of scheduled query it's always Delete and create a new table. This limitation is from BQ side
 
 ## On demand refresh Datamart tables
 1. Go to the scheduled queiries console as described above and chose a table to do a refresh
-2. Click on the `SCHEDULE BACKFILL` button choose option `Run one time trasfer` and clike `ok`. This will start the process.
-3. all 3 tables take about 5 min to run
-
-
-     
+2. Click on the `SCHEDULE BACKFILL` button choose option `Run one time transfer` and clike `ok`. This will start the process.
+3. all 3 tables take about 5 min to run.
 
 ## Athletic student google sheet roster
 Athletic dept provides all the student enrolled to their program in current term via a google sheet. We have an additional step 
