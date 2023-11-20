@@ -12,7 +12,6 @@ WITH
  SELECT
    co.course_offering_id,
    co.le_code AS canvas_course_title,
-   co.available_credits AS credits,
    co.academic_term_id,
    term_name
  FROM
@@ -47,8 +46,7 @@ WITH
    c.canvas_course_title,
    c.term_name,
    s.*,
-   c.academic_term_id,
-   c.credits
+   c.academic_term_id
  FROM
    courses c
  JOIN
@@ -65,7 +63,8 @@ SELECT
   end first_name,
   case when p.last_name is null then REGEXP_EXTRACT(p.name, r'\w+(?:-\w+)?$') else p.last_name
   end last_name,
-  REPLACE (LOWER(pe.email_address), '@umich.edu', '') AS uniqname 
+  REPLACE (LOWER(pe.email_address), '@umich.edu', '') AS uniqname,
+  cse.credits_taken as credits
 FROM 
   courses_sections_of_current_term csct 
 JOIN 
@@ -83,8 +82,7 @@ course_grades AS (
  SELECT
    ce.*,
    cg.le_current_score AS current_grade,
-   cg.le_final_score AS final_grade,
-   cg.gpa_cumulative_excluding_course_grade AS cumulative_gpa
+   cg.le_final_score AS final_grade
  FROM
    `udp-umich-prod.context_store_entity.course_grade` cg
  JOIN
@@ -133,7 +131,7 @@ course_grades AS (
    pamat.academic_major_id,
    pat.athletic_participant_sport,
    pat.cen_academic_level,
-   pat.gpa_credits_units_hours,
+   pat.gpa_cumulative,
    pamat.person_id,
    pat.academic_term_id
  FROM
@@ -161,7 +159,7 @@ course_grades AS (
    b.educational_level,
    b.athletic_participant_sport,
    b.cen_academic_level,
-   b.gpa_credits_units_hours
+   b.gpa_cumulative
  FROM
    courses_grade_average a
  JOIN
@@ -176,8 +174,7 @@ SELECT
  section,
  section_name,
  credits,
- gpa_credits_units_hours,
- cumulative_gpa,
+ gpa_cumulative,
  current_grade,
  final_grade,
  avg_course_grade,
