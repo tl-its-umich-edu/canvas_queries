@@ -9,8 +9,8 @@ r.value.context_type,
 r.value.points_possible, 
 r.value.workflow_state
 FROM 
-`udp-umich-sit.cd2_2023_06_16.rubric_associations` as ra, 
-`udp-umich-sit.cd2_2023_06_16.rubrics` as r
+`udp-umich-prod.canvas.rubric_associations` as ra, 
+`udp-umich-prod.canvas.rubrics` as r
 where ra.value.context_type = 'Course'
 --and ra.value.title like '%ASSIGNMENT TITLE%'
 and ra.value.context_id =<COURSE_ID>
@@ -34,18 +34,18 @@ s.value.workflow_state as submission_workflow_state,
 a.value.workflow_state as assignment_workflow_state,
 r_assessment.value.artifact_attempt,
 r_assessment.value.data
-from `udp-umich-sit.cd2_2023_06_16.rubric_assessments` r_assessment,
+from `udp-umich-prod.canvas.rubric_assessments` r_assessment,
 (
 SELECT key.id as association_id, value.title
 --, value.association_id as association_id, value.association_type
-FROM `udp-umich-sit.cd2_2023_06_16.rubric_associations` 
+FROM `udp-umich-prod.canvas.rubric_associations` 
 where value.context_type = 'Course'
 and value.title like '%ASSIGNMENT TITLE%'
 and value.context_id =<COURSE_ID>
 and value.workflow_state='active'
 order by title) r_association,
-`udp-umich-sit.cd2_2023_06_16.submissions` s
-,`udp-umich-sit.cd2_2023_06_16.assignments` a
+`udp-umich-prod.canvas.submissions` s
+,`udp-umich-prod.canvas.assignments` a
 where r_assessment.value.rubric_association_id = 
 r_association.association_id
 and r_assessment.value.artifact_type='Submission'
@@ -71,19 +71,19 @@ s.value.workflow_state as submission_workflow_state,
 a.value.workflow_state as assignment_workflow_state,
 r_assessment.value.artifact_attempt,
 r_assessment.value.data
-from `udp-umich-sit.cd2_2023_06_16.rubric_assessments` r_assessment,
+from `udp-umich-prod.canvas.rubric_assessments` r_assessment,
 (
 SELECT key.id as association_id, value.title
 --, value.association_id as association_id, value.association_type
-FROM `udp-umich-sit.cd2_2023_06_16.rubric_associations` 
+FROM `udp-umich-prod.canvas.rubric_associations` 
 where value.context_type = 'Course'
 --and value.title like '%ASSIGNMENT TITLE%'
 and value.context_id =<COURSE_ID>
 and value.workflow_state='active'
 order by title) r_association,
-`udp-umich-sit.cd2_2023_06_16.submissions` s
-,`udp-umich-sit.cd2_2023_06_16.assignments` a,
-`udp-umich-sit.cd2_2023_06_16.users` u
+`udp-umich-prod.canvas.submissions` s
+,`udp-umich-prod.canvas.assignments` a,
+`udp-umich-prod.canvas.users` u
 where r_assessment.value.rubric_association_id = r_association.association_id
 and r_assessment.value.artifact_type='Submission'
 and r_assessment.value.artifact_id = s.key.id
