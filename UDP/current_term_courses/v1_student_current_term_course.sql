@@ -131,7 +131,7 @@ course_grades AS (
    pamat.academic_major_id,
    pat.athletic_participant_sport,
    pat.cen_academic_level,
-   pat.gpa_cumulative,
+   pat.gpa_cumulative as cumulative_gpa,
    pamat.person_id,
    pat.academic_term_id
  FROM
@@ -159,7 +159,7 @@ course_grades AS (
    b.educational_level,
    b.athletic_participant_sport,
    b.cen_academic_level,
-   b.gpa_cumulative
+   b.cumulative_gpa
  FROM
    courses_grade_average a
  JOIN
@@ -174,7 +174,7 @@ SELECT
  section,
  section_name,
  credits,
- gpa_cumulative,
+ cumulative_gpa,
  current_grade,
  final_grade,
  avg_course_grade,
