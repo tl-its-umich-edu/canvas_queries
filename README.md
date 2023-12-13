@@ -7,7 +7,7 @@ Common queries for Canvas data
 2. Enter your query in the Editor and click `scheduled` button
 3. Add following in the pop-up window
    1. Details and schedule: `datamart_name__table_name_you_want_to_give`. For example: `athletic_department_views__v1_student_current_term_course`
-   2. Schedule option: `days` and at `18:00`. you can added any number but prod is set to run 2pm EST. Don't need to do anything for `Start now` and `End never` elements.
+   2. Schedule option: `days` and at `18:00`. Don't need to do anything for `Start now` and `End never` elements.
    3. Destination for Query result: 
       1. Check the checkbox `Set a destination table for query results`
       2. Choose the data set name `athletic_department_views`
