@@ -4,7 +4,7 @@ Common queries for Canvas data
 
 ## Creating Scheduled Queries
 1. Go to BiqQuery Console for [scheduled queries](https://console.cloud.google.com/bigquery/scheduled-queries?project=udp-umich-prod) and click on `+ Create scheduled query in editor`
-2. Enter your query in the Editor and click `scheduled` button
+2. Enter your query in the Editor and click `SCHEDULE` button
 3. Add following in the pop-up window
    1. Details and schedule: `datamart_name__table_name_you_want_to_give`. For example: `athletic_department_views__v1_student_current_term_course`
    2. Schedule option: `days` and at `18:00`. Don't need to do anything for `Start now` and `End never` elements.
@@ -15,7 +15,7 @@ Common queries for Canvas data
 4. Destination table write preferance: `Overwrite table`
 
 ## Updating a Scheduled queries
-1. There is no update of scheduled query it's always Delete and create a new table. This limitation is from BQ side
+1. There is no update of scheduled query - it's always Delete and create a new table. This limitation is from BQ side
 
 ## On demand refresh Datamart tables
 1. Go to the scheduled queiries console as described above and chose a table to do a refresh
