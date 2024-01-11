@@ -30,7 +30,7 @@ ORDER BY us.value.name DESC
 *This query finds course courses with active enrollment for given students, and also returns instructor name and email list.
 
 ```
-Select maizey_courses.*
+select courses.*
 , mart_co.instructor_display
 , mart_co.instructor_email_address_display
 from
@@ -55,9 +55,9 @@ WHERE
 en.value.type != 'StudentEnrollment'
 and ps.value.unique_id='<student_login_id>'
 and en.value.workflow_state != 'deleted'
-) as maizey_courses,
+) as courses,
 `udp-umich-prod.mart_helper.context__course_offering__enrollment` as mart_co
-where maizey_courses.Course_ID = cast(mart_co.lms_course_offering_id as INT64)
-ORDER BY maizey_courses.term_id DESC, maizey_courses.course_name DESC;
+where courses.Course_ID = cast(mart_co.lms_course_offering_id as INT64)
+ORDER BY courses.term_id DESC, courses.course_name DESC;
 ;
 ```
