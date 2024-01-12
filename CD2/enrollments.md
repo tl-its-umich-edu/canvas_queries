@@ -27,7 +27,7 @@ ORDER BY us.value.name DESC
 
 ## Get enrolled courses and course instructors
 
-*This query finds course courses with active enrollment for given students, and also returns instructor name and email list.
+*This query finds courses with an active enrollment for given Canvas users and also returns the instructor name and email list.
 
 ```
 select courses.*
