@@ -59,5 +59,4 @@ and en.value.workflow_state != 'deleted'
 `udp-umich-prod.mart_helper.context__course_offering__enrollment` as mart_co
 where courses.Course_ID = cast(mart_co.lms_course_offering_id as INT64)
 ORDER BY courses.term_id DESC, courses.course_name DESC;
-;
 ```
