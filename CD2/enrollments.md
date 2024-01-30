@@ -83,6 +83,7 @@ WHERE en.value.course_id = <COURSE_ID>
     AND en.value.type = 'StudentEnrollment'
     AND en.value.workflow_state = 'active'
 ;
+```
     
 ## Get enrolled courses and course instructors
 
