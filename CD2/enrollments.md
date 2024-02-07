@@ -44,7 +44,7 @@ ORDER BY co.value.name
 ;
 ```
 
-*This query is a variation of the above query; use this query if there are students who have no uniqname and don't exist in pseudonym_dim.*
+*This query is a variation of the above query; use this query if there are students who have no uniqname and don't exist in pseudonyms table*
 ```
 SELECT DISTINCT us.key.id as canvas_user_id
     ,us.value.name
