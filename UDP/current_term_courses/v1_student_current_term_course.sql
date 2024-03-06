@@ -6,7 +6,7 @@ WITH
  FROM
    `udp-umich-prod.context_store_entity.academic_term` at2
  WHERE
-   DATE(current_timestamp) < DATE_ADD(at2.term_end_date, INTERVAL 2 WEEK)
+   DATE(current_timestamp) <= DATE_ADD(at2.term_end_date, INTERVAL 10 DAY)
    AND DATE(current_timestamp) >= at2.term_begin_date ),
  courses AS (
  SELECT
