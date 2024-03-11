@@ -2,7 +2,9 @@ WITH
  term_info AS (
  SELECT
    academic_term_id,
-   name AS term_name
+   name AS term_name,
+   at2.term_begin_date,
+   DATE_ADD(at2.term_end_date, INTERVAL 10 DAY) as term_end_date
  FROM
    `udp-umich-prod.context_store_entity.academic_term` at2
  WHERE
@@ -13,7 +15,9 @@ WITH
    co.course_offering_id,
    co.le_code AS canvas_course_title,
    co.academic_term_id,
-   term_name
+   at2.term_name,
+   at2.term_begin_date,
+   at2.term_end_date
  FROM
    `udp-umich-prod.context_store_entity.course_offering` co
  JOIN
@@ -45,6 +49,8 @@ WITH
  SELECT
    c.canvas_course_title,
    c.term_name,
+   c.term_begin_date,
+   c.term_end_date,
    s.*,
    c.academic_term_id
  FROM
@@ -189,6 +195,8 @@ SELECT
  athletic_participant_sport,
  educational_level,
  term_name,
+ term_begin_date,
+ term_end_date,
  course_section_id,
  canvas_section_id
 FROM

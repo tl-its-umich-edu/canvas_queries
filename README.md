@@ -15,7 +15,8 @@ Common queries for Canvas data
 4. Destination table write preferance: `Overwrite table`
 
 ## Updating a Scheduled queries
-1. There is no update of scheduled query - it's always Delete and create a new table. This limitation is from BQ side
+1. Do as in Step - 1 in the Create scheduled queries section above and click Edit and modify your query and than select `Schedule -> Update scheduled Query`(if you are owner of the queries, BQ configuration changed so this is possible now)
+2. if you are not owner of the scheduled queries - it's may be always Delete and create a new table. (This needs to be tested)
 
 ## On demand refresh Datamart tables
 1. Go to the scheduled queiries console as described above and chose a table to do a refresh
