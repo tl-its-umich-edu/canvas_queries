@@ -1,0 +1,10 @@
+/* Tracking download/usage of two image files owned by U-M Library. Recurring data concierge request by Naomi Binnie (nbinnie) Associate Librarian, University Library - Converted from CD1 to CD2 5/21/24 */
+
+Select att.value.root_attachment_id as source_file_id, att.value.display_name as filename, att.key.id as file_id, co.value.name as course_name, 
+co.key.id as course_id, co.value.workflow_state as course_state, att.value.created_at as file_created_at, att.value.updated_at as file_last_updated, att.value.content_type as file_type, att.value.file_state, att.value.locked as lock_state, att.value.size as filesize_in_bytes, att.value.context_type as file_associated_with, att.value.deleted_at as file_deleted_at
+FROM `udp-umich-prod.canvas.attachments` att
+Join `udp-umich-prod.canvas.courses` co on co.key.id = att.value.context_id
+where att.value.display_name in ('U-MLibImage001.png', 'U-MLibImage002.png')
+and co.value.enrollment_term_id = 312
+order by att.value.display_name
+;
