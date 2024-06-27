@@ -52,7 +52,10 @@ and r_assessment.value.artifact_type='Submission'
 and r_assessment.value.artifact_id = s.key.id
 and s.value.assignment_id = a.key.id
 and a.value.workflow_state='published'
-and r_assessment.value.user_id not in (OPT_OUT_STUDENT1_CANVAS_ID, OPT_OUT_STUDENT2_CANVAS_ID)
+and a.key.id=<ASSIGNMENT_ID>
+and u.key.id=<STUDENT_ID>
+and r_assessment.value.user_id = u.key.id
+--and r_assessment.value.user_id not in (OPT_OUT_STUDENT1_CANVAS_ID, OPT_OUT_STUDENT2_CANVAS_ID)
 order by r_assessment.value.rubric_id, r_assessment.value.user_id
 ```
 
@@ -78,8 +81,8 @@ SELECT key.id as association_id, value.title
 --, value.association_id as association_id, value.association_type
 FROM `udp-umich-prod.canvas.rubric_associations` 
 where value.context_type = 'Course'
---and value.title like '%ASSIGNMENT TITLE%'
-and value.context_id =<COURSE_ID>
+--and value.title like '%RUBRIC TITLE%'
+and value.context_id =667697
 and value.workflow_state='active'
 order by title) r_association,
 `udp-umich-prod.canvas.submissions` s
@@ -90,8 +93,10 @@ and r_assessment.value.artifact_type='Submission'
 and r_assessment.value.artifact_id = s.key.id
 and s.value.assignment_id = a.key.id
 and a.value.workflow_state='published'
+and a.key.id=<ASSIGNMENT_ID>
+and u.key.id=<STUDENT_ID>
 and r_assessment.value.user_id = u.key.id
-and r_assessment.value.user_id not in (OPT_OUT_STUDENT1_CANVAS_ID, OPT_OUT_STUDENT2_CANVAS_ID)
+--and r_assessment.value.user_id not in (OPT_OUT_STUDENT1_CANVAS_ID, OPT_OUT_STUDENT2_CANVAS_ID)
 order by r_assessment.value.rubric_id, r_assessment.value.user_id
 ```
 
