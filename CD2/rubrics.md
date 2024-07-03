@@ -53,8 +53,6 @@ and r_assessment.value.artifact_id = s.key.id
 and s.value.assignment_id = a.key.id
 and a.value.workflow_state='published'
 and a.key.id=<ASSIGNMENT_ID>
-and u.key.id=<STUDENT_ID>
-and r_assessment.value.user_id = u.key.id
 --and r_assessment.value.user_id not in (OPT_OUT_STUDENT1_CANVAS_ID, OPT_OUT_STUDENT2_CANVAS_ID)
 order by r_assessment.value.rubric_id, r_assessment.value.user_id
 ```
