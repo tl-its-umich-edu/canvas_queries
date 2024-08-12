@@ -152,3 +152,35 @@ and en.value.workflow_state != 'deleted'
 where courses.Course_ID = cast(mart_co.lms_course_offering_id as INT64)
 ORDER BY courses.term_id DESC, courses.course_name DESC;
 ```
+
+
+
+## Get teacher enrollments on courses for a specified term. 
+*This query finds all people who are enrolled with a TeacherEnrollment type for courses within a specified term.*
+
+```
+SELECT courses.*
+FROM 
+    (
+    SELECT
+        co.value.name as course_name
+        ,co.key.id as Course_ID
+        ,et.key.id as term_id
+        ,et.value.name as term_name
+        ,ps.value.unique_id as uniqname
+        ,en.value.type as enrollment_type
+        ,ro.value.name as role_name
+    FROM udp-umich-prod.canvas.enrollments as en
+    JOIN udp-umich-prod.canvas.roles ro on en.value.role_id = ro.key.id
+    JOIN udp-umich-prod.canvas.pseudonyms ps on en.value.user_id = ps.value.user_id
+    JOIN udp-umich-prod.canvas.courses co on en.value.course_id = co.key.id
+    JOIN udp-umich-prod.canvas.users us on en.value.user_id = us.key.id
+    JOIN udp-umich-prod.canvas.enrollment_terms as et on co.value.enrollment_term_id = et.key.id
+    JOIN udp-umich-prod.canvas.accounts as acc on co.value.account_id = acc.key.id
+    WHERE et.key.id = <term id>
+        AND en.value.workflow_state = 'active'
+        AND en.value.type = 'TeacherEnrollment'
+    ) as courses
+ORDER BY courses.course_name DESC
+;
+```
