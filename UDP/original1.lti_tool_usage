@@ -1,0 +1,14 @@
+## get the LTI tool launch data within the given timeframe
+
+```
+select
+  event_time as LTI_tool_launch_time,
+  JSON_EXTRACT_SCALAR(object.extensions, '$[\'com.instructure.canvas\'][asset_name]') as LTI_tool_name,
+  REGEXP_EXTRACT(`group`.id, r'.*:(.*)')  AS course_id
+FROM event_store.expanded
+where  
+  event_time >= 'YYYY-MM-DD' and event_time <= 'YYYY-MM-DD'
+  and action='NavigatedTo'
+  and JSON_EXTRACT_SCALAR(object.extensions, '$[\'com.instructure.canvas\'][asset_type]') ='context_external_tool'
+  and JSON_EXTRACT_SCALAR(ed_app.json, '$.id') not like '%canvas%'
+```
