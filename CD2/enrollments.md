@@ -120,3 +120,25 @@ and en.value.workflow_state != 'deleted'
 where courses.Course_ID = cast(mart_co.lms_course_offering_id as INT64)
 ORDER BY courses.term_id DESC, courses.course_name DESC;
 ```
+
+## Get student enrolled dates and last activity dates in one class
+
+*This query is used to get the student enrolled dates and last activity dates in one class.*
+
+```
+select u.key.id as user_id, 
+p.value.unique_id as uniqnamne, 
+u.value.sortable_name as sortable_name, 
+e.value.last_activity_at as last_activity_at, 
+e.value.created_at as enrolled_at
+from 
+`udp-umich-prod`.canvas.enrollments e,  
+`udp-umich-prod`.canvas.users u,
+`udp-umich-prod`.canvas.pseudonyms p
+where e.value.course_id=<course_id>
+and e.value.type='StudentEnrollment'
+and e.value.user_id = u.key.id
+and p.value.user_id = u.key.id
+order by e.value.created_at desc
+;
+```
