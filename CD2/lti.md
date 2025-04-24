@@ -71,3 +71,31 @@ WHERE
   AND et.value.name='Winter 2025'
 ORDER BY co.value.enrollment_term_id DESC, co.value.name DESC;
 ```
+
+This query finds users given roles inside given term Canvas courses with a LTI tool enabled
+```
+SELECT DISTINCT co.key.id as course_canvas_id
+    ,co.value.name as course_name
+    ,ps.value.unique_id as uniqname
+    ,us.value.sortable_name as sortable_name
+    ,en.value.user_id as user_canvas_id
+FROM udp-umich-prod.canvas.enrollments en
+JOIN udp-umich-prod.canvas.pseudonyms ps on en.value.user_id = ps.value.user_id
+JOIN udp-umich-prod.canvas.users us on en.value.user_id = us.key.id
+JOIN udp-umich-prod.canvas.courses co on en.value.course_id = co.key.id
+JOIN udp-umich-prod.canvas.enrollment_terms t on co.value.enrollment_term_id = t.key.id
+JOIN  (
+    select concat('context_external_tool_', cet.key.id) as external_tool_id
+    from udp-umich-prod.canvas.context_external_tools cet
+    where 
+    cet.key.id= <lti_tool_id>
+    and cet.value.workflow_state ='public'
+    ) lti   on (co.value.tab_configuration like concat(concat('%', lti.external_tool_id), '","hidden":null,"%')
+  OR co.value.tab_configuration like concat(concat('%', lti.external_tool_id), '"}%'))
+WHERE t.value.name = '<term_id>'
+    AND en.value.role_id = <role_id>
+    AND co.value.workflow_state = 'available'
+    AND en.value.workflow_state = 'active'
+ORDER BY co.value.name, us.value.sortable_name
+;
+```
