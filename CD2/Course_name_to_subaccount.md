@@ -28,7 +28,7 @@ To create this list, you can use a csv table to fill in the id numbers by using 
 
 After creating the google sheet list of ids and course names, you can paste the google sheets entries into the Query window, then use multi-line editing to format the data holding down the shortcut "Shift"-"Option" and using the cursor to select every line.
 
-Alternatively, you could try to import the google sheets into bigquery by selecting "Create Table" when right-clicking an appropriate dataset (such as "test" in udp-umich-prod)
+Alternatively, you could try to import the google sheets into bigquery by selecting "Create Table" when right-clicking an appropriate dataset (such as "test" in udp-umich-prod). There may be other ways to import custom data, such as using a different project and importing via external connection. You may need to consult Unizin for confirmation of best practices.
 
 ## Find subaccount info
 
