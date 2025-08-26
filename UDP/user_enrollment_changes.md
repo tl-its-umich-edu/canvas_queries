@@ -18,3 +18,20 @@ and JSON_EXTRACT_SCALAR(object.extensions, '$[\'com.instructure.canvas\'][user_n
 and JSON_EXTRACT_SCALAR(group.extensions, '$[\'com.instructure.canvas\'][entity_id]') = '< canvas course id, e.g. 17700000000xxxxxx'
 order by event_time desc
 ```
+
+## find out who created a user enrollment
+
+A query to find out who created a user enrollment, based on enrollment type and course id
+
+```
+SELECT
+  JSON_EXTRACT_SCALAR(actor.extensions, '$[\'com.instructure.canvas\'][user_login]') as user_login,
+  JSON_EXTRACT_SCALAR(object.extensions, '$[\'com.instructure.canvas\'][user_name]') as user_being_added_name, 
+  event_time
+FROM
+  `udp-umich-prod.event_store.expanded`
+WHERE
+  JSON_EXTRACT_SCALAR(object.extensions, '$[\'com.instructure.canvas\'][course_id]') like '%CANVAS_COURSE_ID'
+  AND JSON_EXTRACT_SCALAR(object.extensions, '$[\'com.instructure.canvas\'][type]') like 'ObserverEnrollment'
+  and event_time > '2025-08-25'
+```
