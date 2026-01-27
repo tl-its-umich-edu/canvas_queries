@@ -23,7 +23,7 @@ and STARTS_WITH(object.id, 'urn:instructure:canvas:attachment')
 and action = 'NavigatedTo' 
 and membership.id is not null 
 and REGEXP_EXTRACT(`group`.id, r'.*:(.*)') ='17700000000<course_id>'
-and CAST(REGEXP_EXTRACT(membership.id, r'.*:(.*)') AS INT64) = '17700000000<user_id>'
+and REGEXP_EXTRACT(membership.id, r'.*:(.*)') = '17700000000<user_id>'
 and COALESCE( 
 JSON_EXTRACT_SCALAR(object.extensions, '$[\'com.instructure.canvas\'][asset_name]'), 
 JSON_EXTRACT_SCALAR(object.extensions, '$[\'com.instructure.canvas\'][filename]'), 
