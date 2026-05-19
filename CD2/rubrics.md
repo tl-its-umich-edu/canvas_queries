@@ -122,3 +122,44 @@ and a.value.workflow_state='published'
 and r_assessment.value.user_id not in (OPT_OUT_STUDENT1_CANVAS_ID, OPT_OUT_STUDENT2_CANVAS_ID)
 order by s.value.user_id
 ```
+
+## get List of subaccount courses that utilized assignment rubrics in given academic terms
+```
+SELECT
+  t.value.name AS term_name,
+  ra.value.context_type,
+  ra.value.context_id AS course_id,
+  c.value.name as course_name,
+  ra.value.association_id AS assignment_id,
+  a.value.title AS assignment_title,
+  c.value.name AS course_name,
+  CONCAT(
+   'https://umich.instructure.com/courses/',
+   CAST(ra.value.context_id AS STRING),
+   '/assignments/',
+   CAST(ra.value.association_id AS STRING)
+  ) AS assignment_link
+FROM `udp-umich-prod.canvas.rubric_associations` ra
+ JOIN `udp-umich-prod.canvas.courses` c
+  ON ra.value.context_id = c.key.id
+ JOIN `udp-umich-prod.canvas.enrollment_terms` t
+  ON c.value.enrollment_term_id = t.key.id
+ JOIN `udp-umich-prod.canvas.assignments` a
+  ON ra.value.association_id = a.key.id
+WHERE 
+  ra.value.association_type = 'Assignment'
+  AND t.value.name IN ('Fall 2025', 'Winter 2026')
+  AND (
+   c.value.account_id = 56
+   OR c.value.account_id IN (
+     SELECT key.id
+     FROM `udp-umich-prod.canvas.accounts`
+     WHERE value.parent_account_id = <account_id>
+   )
+  )
+  AND a.value.workflow_state != 'deleted'
+ORDER BY
+  t.value.name,
+  c.value.name,
+  a.value.title
+```
